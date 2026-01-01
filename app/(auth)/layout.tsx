@@ -13,7 +13,7 @@ const Authlayout = ({children}: {children:React.ReactNode}) => {
             height={40} 
             className="rounded-full"
             />
-           ZekDev AI POWERED SaaS PLATFORM
+           AI POWERED SaaS PLATFORM
         </Link>
         {children}
     </div>

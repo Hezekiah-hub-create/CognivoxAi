@@ -1,12 +1,13 @@
 import React, { useState } from 'react'
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
-import { z } from "zod";
+import { email, z } from "zod";
 import { usePathname, useRouter } from 'next/navigation';
-// import {
-//     createUserWithEmailAndPassword,
-//     signInWithEmailAndPassword,
-// } from "firebase/auth";
+import {
+    createUserWithEmailAndPassword,
+    signInWithEmailAndPassword,
+} from "firebase/auth";
+import { auth } from "@/services/firebase";
 import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import {
@@ -23,14 +24,15 @@ import {
 } from "@/components/ui/field"
 import { title } from 'process';
 import { Input } from '../ui/input';
-import { Eye, EyeOff } from "lucide-react";
+import { saveUser } from '@/services/auth/saveUser';
+;
 
 const AuthForm = ({
     loading, setLoading
 } : {
     loading: boolean
     setLoading: (loading: boolean) => void
-}) => {
+}): React.ReactElement => {
   const pathname = usePathname();
   const router = useRouter();
   const isSignUp = pathname === "/sign-up";
@@ -63,7 +65,68 @@ const AuthForm = ({
   });
 
   function onSubmit(data: z.infer<typeof formSchema>) {
-    console.log(data);
+    setLoading(true);
+    if (isSignUp) {
+      // Sign Up Logic
+      createUserWithEmailAndPassword(auth, data.email, data.password)
+      .then(async (userCredential) => {
+        // Signed up 
+        const user = userCredential.user;
+        // user saved to db logic here
+        if(!user.uid) {
+          toast.error("Error: User email not found");
+          setLoading(false);
+          return;
+        }
+
+        const userSaved = await saveUser({
+          email: user.email || "",
+          id: user.uid,
+          image: user.photoURL || "",
+          name: user.displayName || "",
+          checkoutId: null,
+          isPro: false,
+        })
+        
+        if(!userSaved.success){
+          toast.error(`Error: ${userSaved.error}`);
+        setLoading(false);
+          return;
+        }
+
+        toast.success("Account Created Successfully!");
+        setLoading(false);
+      })
+      .catch((error) => {
+        // const errorCode = error.code;
+        const errorMessage = "Failed to create account. Please try again.";
+        setLoading(false);
+        toast.error(`Error: ${errorMessage}`);
+      })
+      .finally(() => {
+        setLoading(false);
+        toast.success("Account Created Successfully!");
+        router.push("/sign-in");
+      });
+    } else {
+      // Sign In Logic
+      signInWithEmailAndPassword(auth, data.email, data.password)
+        .then((userCredential) => {
+          // Signed in
+          const user = userCredential.user;
+          console.log("User signed in", user);
+          // not working without inmporting toaster in /layout.tsx
+          toast.success("Sign In Successful!");
+          setLoading(false);
+          // router.push("/");
+        })
+        .catch((error) => {
+          // const errorCode = error.code;
+          const errorMessage = "Invalid email or password";
+          setLoading(false);
+          toast.error(`Error : ${errorMessage}`);
+        })
+    }
   }
   return (
     <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -134,7 +197,7 @@ const AuthForm = ({
                 </Field>
               )}
             />)}
-             <Button type="submit" disabled={loading} >
+             <Button type="submit" disabled={loading} className='bg-purple-800 hover:bg-purple-950'>
               {isSignUp ? " Create Account" : "Login to your Account"}
             </Button>
        </FieldGroup>

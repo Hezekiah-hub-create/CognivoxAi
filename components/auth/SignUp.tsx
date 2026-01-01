@@ -13,7 +13,7 @@ const SignUp = () => {
         title="Sign Up to your Account"
         description="Enter your details to create a new account"
         content={<AuthForm loading={loading} setLoading={setLoading}/>}
-        footer={<Socials loading={loading} setLoading={setLoading}/>}
+        footer={<Socials loading={loading} setLoading={setLoading} />}
     />
   )
 }
