@@ -39,6 +39,7 @@ const Socials = () => {
           email: auth.currentUser!.email!,
           image: auth.currentUser!.photoURL || "",
           isPro: false,
+          checkoutId: null,
         });
         if (!response.success) {
           toast.error("Failed to save user to database.");
@@ -52,6 +53,8 @@ const Socials = () => {
             auth.currentUser!.email!.split("@")[0],
           email: auth.currentUser!.email!,
           image: auth.currentUser!.photoURL || "",
+          isPro: false,
+          checkoutId: null,
         });
         toast.success("Successfully signed!");
         router.push("/dashboard");

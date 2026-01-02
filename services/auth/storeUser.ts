@@ -2,7 +2,7 @@
 
 import { cookies } from "next/headers";
 import { decrypt, encrypt } from "./JWT";
-import { User } from "firebase/auth";
+import { User } from "@/types";
 
 
 export async function storeUser(userData: {
@@ -10,6 +10,8 @@ export async function storeUser(userData: {
   name: string;
   email: string;
   image: string;
+  isPro: boolean;
+  checkoutId: string | null;
 }) {
   const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
   const session = await encrypt({ userData, expiresAt });
@@ -29,7 +31,6 @@ export async function getUserSession(): Promise<User | null> {
   const session = await decrypt(cookie);
 
   if (session) {
-    // console.log(session);
     return session.userData as User;
   } else {
     return null;

@@ -88,6 +88,8 @@ export function AuthForm() {
             email: user.email!,
             image: user.photoURL || "",
             name: user.displayName || user.email!.split("@")[0],
+            isPro: false,
+            checkoutId: null,
           });
           toast.success("User created successfully!");
           router.push("/dashboard");
@@ -109,6 +111,8 @@ export function AuthForm() {
             email: user.email!,
             image: user.photoURL || "",
             name: user.displayName || user.email!.split("@")[0],
+            isPro: false,
+            checkoutId: null,
           });
           toast.success("Signed in successfully!");
           router.push("/dashboard");

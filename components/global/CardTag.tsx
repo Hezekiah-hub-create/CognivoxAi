@@ -22,7 +22,7 @@ const CardTag = ({
     footer: React.ReactNode
 }) => {
   return (
-    <Card className="w-full max-w-md shadow-lg flex flex-col  bg-white dark:bg-slate-800 p-7 rounded-lg">
+    <Card className="w-full max-w-lg shadow-lg flex flex-col bg-white dark:bg-slate-800 p-7 rounded-lg">
         <CardHeader>
             <CardTitle>{title}</CardTitle>
             <CardDescription>{description}</CardDescription>
